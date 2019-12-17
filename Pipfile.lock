@@ -1,0 +1,57 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "6b5620d65138ebf1a0d373fa5a2f9eac516a77c37f7fbd8324dee67dfa30c7e6"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.8"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "colorama": {
+            "hashes": [
+                "sha256:7d73d2a99753107a36ac6b455ee49046802e59d9d076ef8e47b61499fa29afff",
+                "sha256:e96da0d330793e2cb9485e9ddfd918d456036c7149416295932478192f4436a1"
+            ],
+            "index": "pypi",
+            "version": "==0.4.3"
+        },
+        "pafy": {
+            "hashes": [
+                "sha256:364f1d1312c89582d97dc7225cf6858cde27cb11dfd64a9c2bab1a2f32133b1e",
+                "sha256:769e35aa6988686d47fa2ab235d15c9952c7873c470f6a6b05cf6bcd93e62515"
+            ],
+            "index": "pypi",
+            "version": "==0.5.5"
+        },
+        "python-vlc": {
+            "hashes": [
+                "sha256:821bca0dbe08fbff97a65e56ff2318ad7d499330876579c39f01f3fb38c7b679",
+                "sha256:f62987571cf3d58adfc5b2c0adab679f96dcce76e8096d14cc56abd4c3d3527b"
+            ],
+            "index": "pypi",
+            "version": "==3.0.7110"
+        },
+        "vlcyt": {
+            "editable": true,
+            "path": "."
+        },
+        "youtube-dl": {
+            "hashes": [
+                "sha256:43d6b991a34934fec2be20b93d4774ccc8642db1e5f0b8f1569f53b8d769af48",
+                "sha256:de2254dc38472b0e0e3ac4d1e95a9e636ec790af83e7b055e1e09f03eb61bb5c"
+            ],
+            "index": "pypi",
+            "version": "==2019.11.28"
+        }
+    },
+    "develop": {}
+}
