@@ -1,10 +1,12 @@
 import threading
 from colorama import Fore
 
+
 class CommandHandler:
     """
     Handles user input for VLCYT
     """
+
     _help_commands = ["?", "help"]
     _volume_commands = ["volume", "v"]
     _skip_commands = ["skip", "s", "next", "n", "forward", "f"]
@@ -20,8 +22,6 @@ class CommandHandler:
         self.input_thread = threading.Thread(target=self._get_input)
         self.input_thread.daemon = True
 
-        
-    
     def _get_input(self):
         """
         Gathers user input from the input thread and executes commands.
@@ -29,7 +29,7 @@ class CommandHandler:
         print("===Enter ? to view a list of commands===")
         while True:
             command_name, command_value = self._get_command()
-            #print(f"-----Command name: {command_name} |---Value: {command_value}")
+            # print(f"-----Command name: {command_name} |---Value: {command_value}")
             if command_name in self._help_commands:
                 self.command_help()
             elif command_name in self._volume_commands:
@@ -50,7 +50,7 @@ class CommandHandler:
                 self.vlcyt.exit_program = True
             else:
                 print("Invalid command")
-        
+
     def _get_command(self):
         """
         Processes a command from the user.
@@ -69,7 +69,7 @@ class CommandHandler:
 
     def command_help(self):
         print(
-f"""
+            f"""
 {Fore.MAGENTA}======================================
 {Fore.YELLOW}NOTE: Most commands have multiple aliases separated by commas, use whichever you prefer.
 
@@ -108,7 +108,8 @@ Closes the program.
 {Fore.CYAN}---Settings---{Fore.RESET}
 {Fore.GREEN}Looping:{Fore.RESET} {f"{Fore.GREEN}Enabled{Fore.RESET}" if self.vlcyt.loop_song else f"{Fore.RED}Disabled{Fore.RESET}"}
 {Fore.GREEN}Shuffling:{Fore.RESET} {f"{Fore.GREEN}Enabled{Fore.RESET}" if self.vlcyt.shuffle_playlist else f"{Fore.RED}Disabled{Fore.RESET}"}
-{Fore.CYAN}--------------{Fore.RESET}""")
+{Fore.CYAN}--------------{Fore.RESET}"""
+        )
 
     def command_set_volume(self, volume):
         """
@@ -120,11 +121,13 @@ Closes the program.
             print(f"{Fore.RED}Bad input.{Fore.RESET} Enter an integer from 0 - 100.")
             return
         if 0 <= volume <= 100:
-            if self.vlcyt.vlc_player.audio_set_volume(volume) == 0: # Returns 0 if volume was set
+            if (
+                self.vlcyt.vlc_player.audio_set_volume(volume) == 0
+            ):  # Returns 0 if volume was set
                 print(f"Volume set to {Fore.GREEN}{volume}{Fore.RESET}")
         else:
             print(f"{Fore.RED}Volume out of range.{Fore.RESET} Range: 0 - 100")
-    
+
     def command_skip_song(self, amount_to_skip):
         """
         Skips the current song.
@@ -138,35 +141,39 @@ Closes the program.
                 print(f"{Fore.RED}Bad input.{Fore.RESET} Enter a number.")
                 return
 
-
         if amount_to_skip in [1, None]:
-            self.vlcyt.song_index = self.vlcyt.song_index + 1 if self.vlcyt.song_index < self.vlcyt.total_songs else 0
+            self.vlcyt.song_index = (
+                self.vlcyt.song_index + 1
+                if self.vlcyt.song_index < self.vlcyt.total_songs
+                else 0
+            )
             self.vlcyt.skip_song = True
         elif amount_to_skip > 1:
             potential_index = self.vlcyt.song_index + amount_to_skip
-            if potential_index <= self.vlcyt.total_songs: 
-                self.vlcyt.song_index += amount_to_skip-1
+            if potential_index <= self.vlcyt.total_songs:
+                self.vlcyt.song_index += amount_to_skip - 1
                 self.vlcyt.skip_song = True
-            else: # Round robin
+            else:  # Round robin
                 total_multiplier = potential_index // self.vlcyt.total_songs
-                self.vlcyt.song_index = potential_index - 1 - self.vlcyt.total_songs * total_multiplier
+                self.vlcyt.song_index = (
+                    potential_index - 1 - self.vlcyt.total_songs * total_multiplier
+                )
                 self.vlcyt.skip_song = True
         else:
             print(f"{Fore.RED}Bad input.{Fore.RESET} Enter a value greater than 0.")
-        
+
     def command_repeat(self):
         """
         Repeats the current song.
         """
         self.vlcyt.vlc_player.set_time(0)
 
-
     def command_p(self):
         """
         Plays/Pauses the current song.
         """
         self.vlcyt.vlc_player.pause()
-    
+
     def command_back(self):
         """
         Play last song in history.
@@ -176,7 +183,7 @@ Closes the program.
             self.vlcyt.skip_song = True
         else:
             print(f"{Fore.RED}No songs in history{Fore.RESET}")
-    
+
     def command_loop(self):
         """
         Enables/Disables looping the current song.
@@ -187,7 +194,7 @@ Closes the program.
         else:
             self.vlcyt.loop_song = False
             print(f"Looping {Fore.RED}disabled.{Fore.RESET}")
-    
+
     def command_shuffle(self):
         if self.vlcyt.shuffle_playlist == False:
             self.vlcyt.shuffle_playlist = True
