@@ -14,16 +14,47 @@ https://streamable.com/z94tg
 This project has only been tested on Windows 10  
 
 ## Installation
-#### Download the requirements in requirements.txt  
-`pip install -r requirements.txt`  
 
-#### Download VLCYT  
-`pip install vlcyt`
+`pip install git+https://github.com/hillt03/VLCYT`
 
 ## Usage
 
-Be sure to include quotes around positional arguments.
+Be sure to include quotes around arguments.
 
 `python -m vlcyt "<youtube_playlist_url>" [-v "<VLC Install directory>"]`
 
 If you have VLC installed and get a FileNotFound Error, use the -v switch to include the path to your VLC install directory. Otherwise, don't forget to install VLC (64-bit).
+
+## Commands
+
+NOTE: Most commands have multiple aliases separated by commas, use whichever you prefer.
+
+### ?, help  
+Opens the help menu and shows whether or not looping and shuffling are enabled.
+
+### volume, v  
+Adjust the volume (0 - 100).
+
+### skip, s, next, n, forward, f  
+Skips song(s).  
+For example: Entering "skip" will skip one song,
+entering "skip 5" will skip 5 songs.
+
+### play, pause, p  
+Plays/Pauses the current song.
+
+### repeat, replay, r  
+Repeats the current song one time.
+
+### back, b  
+Skips to the last song played.
+
+### loop, l  
+Enables looping.
+The current song will keep playing until looping is disabled.
+
+### shuffle  
+Shuffles the playlist without repeating until every song has been played.
+
+### exit, quit, q  
+Closes the program.

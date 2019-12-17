@@ -76,7 +76,7 @@ f"""
 {Fore.CYAN}VLCYT Commands:
 
 {Fore.GREEN}?, help{Fore.WHITE}
-Opens this help menu.
+Opens this help menu and shows whether or not looping and shuffling are enabled.
 
 {Fore.GREEN}volume, v{Fore.WHITE}
 Adjust the volume (0 - 100).
