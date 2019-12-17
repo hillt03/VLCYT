@@ -208,6 +208,7 @@ def parse_args():
     Parses passed in CLI arguments. 
     Output: tuple: YouTube playlist URL string, VLC Install Directory
     """
+
     parser = argparse.ArgumentParser(description="Streams YouTube Playlist in VLC")
     parser.add_argument(
         "youtube_playlist_URL",
@@ -221,6 +222,8 @@ def parse_args():
         help='If you\'re getting a FileNotFound error, use this option to pass in your VLC install directory. Example: "C:\\Program Files\\VideoLAN\VLC" Be sure to include the quotes.',
     )
     args = parser.parse_args()
+    if args.v is None:
+        args.v = "C:\Program Files\VideoLAN\VLC"
     return args.youtube_playlist_URL, args.v
 
 
@@ -230,16 +233,49 @@ def add_vlc_dir_to_path(vlc_dir):
     Adds the install directory to the path and imports the vlc module.
     """
     app_dir = os.getcwd()
-    os.add_dll_directory(
-        r"C:\Program Files\VideoLAN\VLC"
-    ) if not vlc_dir else os.add_dll_directory(vlc_dir)
+    os.add_dll_directory(vlc_dir)
     os.chdir(app_dir)
     global vlc
     import vlc
 
 
+def read_playlist_and_VLC_url_from_file():
+    """
+    Reads previously stored YouTube playlist URL and VLC directory.
+    Output: tuple: playlist url, vlc dir
+    """
+    url = ""
+    vlc_dir = ""
+    with open("data/playlist.txt", "r") as playlist_file:
+        url = playlist_file.read()
+    with open("data/vlc_dir.txt", "r") as vlc_dir_file:
+        vlc_dir = vlc_dir_file.read()
+    return url, vlc_dir
+
+
+def write_playlist_url_and_vlc_dir_to_file(playlist_url, vlc_dir):
+    """
+    Stores the playlist url and vlc dir.
+    """
+    if not os.path.isdir("./data"):
+        os.mkdir("./data")
+    with open("./data/playlist.txt", "w+") as playlist_file:
+        playlist_file.write(playlist_url)
+    with open("./data/vlc_dir.txt", "w+") as vlc_dir_file:
+        vlc_dir_file.write(vlc_dir)
+
+
 def main():
-    youtube_playlist_URL, vlc_dir = parse_args()
+    if len(sys.argv) == 1:
+        if os.path.exists("data/playlist.txt") and os.path.exists("data/vlc_dir.txt"):
+            youtube_playlist_URL, vlc_dir = read_playlist_and_VLC_url_from_file()
+        else:
+            print('No YouTube playlist stored. Run "python -m vlcyt -h" for help.')
+            sys.exit(0)
+    else:
+        youtube_playlist_URL, vlc_dir = parse_args()
+        write_playlist_url_and_vlc_dir_to_file(youtube_playlist_URL, vlc_dir)
+
     add_vlc_dir_to_path(vlc_dir)
     vlcyt = VLCYT(youtube_playlist_URL)
     vlcyt.play_playlist_songs()

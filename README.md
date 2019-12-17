@@ -25,6 +25,8 @@ Be sure to include quotes around arguments.
 
 If you have VLC installed and get a FileNotFound Error, use the -v switch to include the path to your VLC install directory. Otherwise, don't forget to install VLC (64-bit).
 
+After running for the first time, you can then simply enter `python -m vlcyt` and the last playlist you passed in will begin playing.
+
 ## Commands
 
 **NOTE:** Most commands have multiple aliases separated by commas, use whichever you prefer.
@@ -58,3 +60,8 @@ Shuffles the playlist without repeating until every song has been played.
 
 ### exit, quit, q  
 Closes the program.
+
+## Links
+
+[GitHub](https://github.com/hillt03)  
+[PyPI](https://pypi.org/project/VLCYT/)
