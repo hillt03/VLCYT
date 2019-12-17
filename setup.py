@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="VLCYT",
-    version="1.2", # update VLCYT version in requirements as well
+    version="1.3", # update VLCYT version in requirements as well
     description="Stream your YouTube playlist in VLC behind the scenes from the command line.",
     long_description=long_description,
     long_description_content_type="text/markdown",

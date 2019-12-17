@@ -141,8 +141,8 @@ class VLCYT:
 
         self._reset_state()
         # Play song
-        song_url = self.current_song.getbestaudio().url_https
-        self.vlc_player.set_mrl(song_url)
+        song_url = self.current_song.getbestaudio().url
+        self.vlc_player.set_mrl(song_url, ":no-video")
         self.vlc_player.play()
         if not self.input_thread_started:
             self.cmds.input_thread.start()
