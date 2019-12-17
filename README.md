@@ -7,8 +7,8 @@ https://streamable.com/z94tg
 
 ## Requirements
 
-64-bit VLC Media Player  
-64-bit Python 3.8  
+[64-bit VLC Media Player](https://get.videolan.org/vlc/3.0.8/win64/vlc-3.0.8-win64.exe)  
+[64-bit Python 3.8](https://www.python.org/ftp/python/3.8.0/python-3.8.0-amd64.exe)  
 
 ### Note
 This project has only been tested on Windows 10  
@@ -27,7 +27,7 @@ If you have VLC installed and get a FileNotFound Error, use the -v switch to inc
 
 ## Commands
 
-NOTE: Most commands have multiple aliases separated by commas, use whichever you prefer.
+**NOTE:** Most commands have multiple aliases separated by commas, use whichever you prefer.
 
 ### ?, help  
 Opens the help menu and shows whether or not looping and shuffling are enabled.
