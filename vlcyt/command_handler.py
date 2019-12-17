@@ -29,7 +29,6 @@ class CommandHandler:
         print("===Enter ? to view a list of commands===")
         while True:
             command_name, command_value = self._get_command()
-            # print(f"-----Command name: {command_name} |---Value: {command_value}")
             if command_name in self._help_commands:
                 self.command_help()
             elif command_name in self._volume_commands:

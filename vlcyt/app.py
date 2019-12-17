@@ -178,7 +178,6 @@ class VLCYT:
             self.song_history = [self.song_history[-1]]
             self.song_counter = 0
             return True
-            # self.song_index = 0
         return False
 
     def _add_song_to_history(self):
