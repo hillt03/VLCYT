@@ -2,4 +2,4 @@ colorama==0.4.3
 pafy==0.5.5
 python-vlc==3.0.7110
 youtube-dl==2019.11.28
-VLCYT==1.1
+VLCYT==1.2

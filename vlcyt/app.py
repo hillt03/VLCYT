@@ -17,12 +17,10 @@ class VLCYT:
     command_string = f"{Fore.RESET}{Back.RESET}>"
 
     def __init__(self, playlist_url, song_info_enabled=True):
-        self.playlist = pafy.get_playlist(playlist_url)  # Pafy playlist object
+        self.playlist = pafy.get_playlist2(playlist_url)  # Pafy playlist object
         self.song_index = 0  # Current song index
         self.song_counter = 0  # Stores how many songs have been played, resets if every song has been played.
-        self.total_songs = len(
-            self.playlist["items"]
-        )  # Amount of songs in the Pafy object
+        self.total_songs = len(self.playlist)  # Amount of songs in the Pafy object
         self.current_song = None  # Stores the current song
         self.vlc_player = vlc.MediaPlayer()  # Stores the VLC object
         self.song_info_enabled = song_info_enabled  # The current song information is printed when the song changes if this is enabled
@@ -57,6 +55,7 @@ class VLCYT:
             elif self.skip_song:  # Song(s) skipped
                 self.skip_song = False
                 self.back_amount = 0
+                self._set_current_song(self.song_index)
                 self._add_song_to_history()
             elif self.back_song:  # Back command entered
                 self._get_next_song_back()
@@ -71,7 +70,7 @@ class VLCYT:
         """
         Sets the current song to the index that was passed in.
         """
-        self.current_song = self.playlist["items"][index]["pafy"]
+        self.current_song = self.playlist[index]
 
     def _get_next_song(self):
         """

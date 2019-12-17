@@ -11,7 +11,7 @@ https://streamable.com/z94tg
 [64-bit Python 3.8](https://www.python.org/ftp/python/3.8.0/python-3.8.0-amd64.exe)  
 
 ### Note
-This project has only been tested on Windows 10  
+This project has only been tested on Windows 10.  
 
 ## Installation
 
