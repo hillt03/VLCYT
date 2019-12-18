@@ -47,7 +47,7 @@ class CommandHandler:
             elif command_name in self._exit_commands:
                 self.vlcyt.exit_program = True
             else:
-                print("Invalid command")
+                print(f"{Fore.RED}Invalid command{Fore.RESET}")
 
     def _get_command(self):
         """
