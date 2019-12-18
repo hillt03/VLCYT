@@ -24,7 +24,7 @@ Be sure to include quotes around arguments.
 `python -m vlcyt ["<youtube_playlist_url>" -v "<VLC Install directory>"]`
 
 
-If you have VLC installed and get a FileNotFound Error, use the -v switch to include the path to your VLC install directory. Otherwise, don't forget to install VLC (64-bit).
+If you have VLC installed and get a FileNotFound Error, use the `-v` switch to include the path to your VLC install directory. Otherwise, don't forget to install VLC (64-bit). VLCYT will look for VLC in `C:\Program Files\VideoLAN\VLC` by default.
 
 After running for the first time, you can then simply enter `python -m vlcyt` and the last playlist you passed in will begin playing.
 
@@ -34,6 +34,7 @@ After running for the first time, you can then simply enter `python -m vlcyt` an
 
 After this initial command, do the following to load your stored settings:
 `python -m vlcyt`
+
 
 ## Commands
 
