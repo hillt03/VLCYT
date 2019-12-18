@@ -113,7 +113,7 @@ class VLCYT:
         if self.song_info_enabled:
             os.system("cls||clear")
             print(             
-f"""{Fore.CYAN}======================================{self.current_song.videoid}
+f"""{Fore.CYAN}======================================
 {Fore.GREEN}Title:{Fore.RESET} {self.current_song.title}
 {Fore.GREEN}Length:{Fore.RESET} {self.current_song.duration}
 {Fore.GREEN}Views:{Fore.RESET} {self.current_song.viewcount:,d}
