@@ -21,11 +21,19 @@ This project has only been tested on Windows 10.
 
 Be sure to include quotes around arguments.
 
-`python -m vlcyt "<youtube_playlist_url>" [-v "<VLC Install directory>"]`
+`python -m vlcyt ["<youtube_playlist_url>" -v "<VLC Install directory>"]`
+
 
 If you have VLC installed and get a FileNotFound Error, use the -v switch to include the path to your VLC install directory. Otherwise, don't forget to install VLC (64-bit).
 
 After running for the first time, you can then simply enter `python -m vlcyt` and the last playlist you passed in will begin playing.
+
+### Example
+
+`python -m vlcyt "https://www.youtube.com/watch?v=8jrN6Kz2XbU&list=PLPVigFOpn3YjTdJ3-hIILmeP3jsjXntOU&index=1" -v "C:\Program Files\VideoLAN\VLC"`
+
+After this initial command, do the following to load your stored settings:
+`python -m vlcyt`
 
 ## Commands
 
