@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6b5620d65138ebf1a0d373fa5a2f9eac516a77c37f7fbd8324dee67dfa30c7e6"
+            "sha256": "afc0e10b21fb5768fcc6789381ac0b1db1fb4428c8707fa6a06ec189796a6e02"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -31,6 +31,13 @@
             ],
             "index": "pypi",
             "version": "==0.5.5"
+        },
+        "pyperclip": {
+            "hashes": [
+                "sha256:979325468ccf682104d5dcaf753f869868100631301d3e72f47babdea5700d1c"
+            ],
+            "index": "pypi",
+            "version": "==1.7.0"
         },
         "python-vlc": {
             "hashes": [

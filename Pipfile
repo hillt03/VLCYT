@@ -11,6 +11,7 @@ python-vlc = "*"
 youtube-dl = "*"
 colorama = "*"
 vlcyt = {editable = true,path = "."}
+pyperclip = "*"
 
 [requires]
 python_version = "3.8"

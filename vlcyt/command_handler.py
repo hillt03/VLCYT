@@ -1,4 +1,5 @@
 import threading
+import pyperclip
 from colorama import Fore
 
 
@@ -15,6 +16,7 @@ class CommandHandler:
     _back_commands = ["back", "b"]
     _loop_commands = ["loop", "l"]
     _shuffle_commands = ["shuffle"]
+    _copy_url_commands = ["copy", "c", "url"]
     _exit_commands = ["exit", "quit", "q"]
 
     def __init__(self, vlcyt):
@@ -44,6 +46,8 @@ class CommandHandler:
                 self.command_loop()
             elif command_name in self._shuffle_commands:
                 self.command_shuffle()
+            elif command_name in self._copy_url_commands:
+                self.command_copy_url()
             elif command_name in self._exit_commands:
                 self.vlcyt.exit_program = True
             else:
@@ -99,6 +103,9 @@ The current song will keep playing until looping is disabled.
 
 {Fore.GREEN}shuffle{Fore.WHITE}
 Shuffles the playlist without repeating until every song has been played.
+
+{Fore.GREEN}copy, c, url{Fore.WHITE}
+Copy the current song's YouTube URL.
 
 {Fore.GREEN}exit, quit, q{Fore.WHITE}
 Closes the program.
@@ -200,3 +207,7 @@ Closes the program.
         else:
             self.vlcyt.shuffle_playlist = False
             print(f"Shuffle {Fore.RED}disabled.{Fore.RESET}")
+    
+    def command_copy_url(self):
+        pyperclip.copy("https://www.youtube.com/watch?v=" + self.vlcyt.current_song.videoid)
+        print(f"{Fore.GREEN}Song URL Copied")

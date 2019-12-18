@@ -67,6 +67,9 @@ The current song will keep playing until looping is disabled.
 ### shuffle  
 Shuffles the playlist without repeating until every song has been played.
 
+### copy, c, url
+Copies the current song's YouTube URL.
+
 ### exit, quit, q  
 Closes the program.
 
