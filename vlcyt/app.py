@@ -26,7 +26,6 @@ class VLCYT:
         self.song_info_enabled = song_info_enabled  # The current song information is printed when the song changes if this is enabled
 
         self.song_history = []  # Stores indexes of songs that have been played
-        self.song_in_history = False  # True if there's a song in song_history
 
         # User input
         self.cmds = CommandHandler(self)
@@ -44,15 +43,11 @@ class VLCYT:
     def play_playlist_songs(self):
         """
         Play every song in the passed in playlist.
+        Note: Skip is handled in command_handler and _get_next_song() is executed following a skip.
         """
         while True:
             if not self._input_features_enabled():  # No extra features enabled. Default.
                 self._get_next_song()
-            elif self.skip_song:  # Song(s) skipped
-                self.skip_song = False
-                self.back_amount = 0
-                self._set_current_song(self.song_index)
-                self._add_song_to_history()
             elif self.back_song:  # Back command entered
                 self._get_next_song_back()
             elif self.loop_song:  # Looping enabled
@@ -96,21 +91,16 @@ class VLCYT:
         Sets the current song to a random unique song in the playlist.
         Even YouTube couldn't write a better shuffling algorithm!
         """
-        if self.song_in_history:
-            found_unique_random = False
-            while not found_unique_random:
-                random_int = random.randint(0, self.total_songs - 1)
-                if random_int not in self.song_history:
-                    self.song_index = random_int
-                    self._set_current_song(random_int)
-                    self._add_song_to_history()
-                    found_unique_random = True
-                elif self.song_counter == self.total_songs:
-                    self.song_history = [self.song_history[-1]]
-        else:
-            self.song_index = random.randint(0, self.total_songs)
-            self._set_current_song(self.song_index)
-            self._add_song_to_history()
+        found_unique_random = False
+        while not found_unique_random:
+            random_int = random.randint(0, self.total_songs - 1)
+            if random_int not in self.song_history:
+                self.song_index = random_int
+                self._set_current_song(random_int)
+                self._add_song_to_history()
+                found_unique_random = True
+            elif self.song_counter == self.total_songs:
+                self.song_history = [self.song_history[-1]]
 
     def _print_current_song_information(self, print_command_string=True):
         """
@@ -119,7 +109,7 @@ class VLCYT:
         if self.song_info_enabled:
             os.system("cls||clear")
             print(
-                f"""
+                f"""history {self.song_history}
 {Fore.CYAN}======================================
 {Fore.GREEN}Title:{Fore.RESET} {self.current_song.title}
 {Fore.GREEN}Length:{Fore.RESET} {self.current_song.duration}
