@@ -106,14 +106,19 @@ class VLCYT:
         """
         Prints the current song's relevant information.
         """
+        date = self.current_song.published.split()[0].split("-")
+        year, month, day = date
+        date = f"{month}/{day}/{year}"
+
         if self.song_info_enabled:
             os.system("cls||clear")
             print(             
-f"""{Fore.CYAN}======================================
+f"""{Fore.CYAN}======================================{self.current_song.videoid}
 {Fore.GREEN}Title:{Fore.RESET} {self.current_song.title}
 {Fore.GREEN}Length:{Fore.RESET} {self.current_song.duration}
 {Fore.GREEN}Views:{Fore.RESET} {self.current_song.viewcount:,d}
 {Fore.GREEN}Rating:{Fore.RESET} {round(self.current_song.rating, 2)}
+{Fore.GREEN}Date:{Fore.RESET} {date}
 {Fore.CYAN}======================================
 {self.command_string if print_command_string else ""}""",
                 end="",
