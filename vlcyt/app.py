@@ -40,17 +40,13 @@ class VLCYT:
         self.back_song = False  # Becomes True if the user enters the back command
         self.back_amount = 1  # Stores how many indexes back will be popped from song_history to get songs in history
 
+
     def play_playlist_songs(self):
         """
         Play every song in the passed in playlist.
         """
         while True:
-            if (
-                not self.loop_song
-                and not self.shuffle_playlist
-                and not self.back_song
-                and not self.skip_song
-            ):  # No extra features enabled. Default.
+            if not self._input_features_enabled():  # No extra features enabled. Default.
                 self._get_next_song()
             elif self.skip_song:  # Song(s) skipped
                 self.skip_song = False
@@ -116,7 +112,7 @@ class VLCYT:
             self._set_current_song(self.song_index)
             self._add_song_to_history()
 
-    def _print_current_song_information(self):
+    def _print_current_song_information(self, print_command_string=True):
         """
         Prints the current song's relevant information.
         """
@@ -130,7 +126,7 @@ class VLCYT:
 {Fore.GREEN}Views:{Fore.RESET} {self.current_song.viewcount:,d}
 {Fore.GREEN}Rating:{Fore.RESET} {round(self.current_song.rating, 2)}
 {Fore.CYAN}======================================
-{self.command_string}""",
+{self.command_string if print_command_string else ""}""",
                 end="",
             )
 
@@ -141,13 +137,17 @@ class VLCYT:
 
         self._reset_state()
         # Play song
-        song_url = self.current_song.getbestaudio().url
+        song_url = self.current_song.getbestaudio().url_https
         self.vlc_player.set_mrl(song_url, ":no-video")
         self.vlc_player.play()
+
         if not self.input_thread_started:
+            self._print_current_song_information(print_command_string=False)
+            print(f"{Fore.YELLOW}===Enter ? to view a list of commands==={Fore.RESET}")
             self.cmds.input_thread.start()
             self.input_thread_started = True
-        self._print_current_song_information()
+        else:
+            self._print_current_song_information()
 
         # Sleep for duration of song
         self._song_timer()
@@ -178,6 +178,10 @@ class VLCYT:
             self.song_counter = 0
             return True
         return False
+
+    def _input_features_enabled(self):
+        input_features = [self.loop_song, self.shuffle_playlist, self.back_song, self.skip_song]
+        return True if True in input_features else False
 
     def _add_song_to_history(self):
         """

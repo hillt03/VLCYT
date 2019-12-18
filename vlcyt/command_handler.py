@@ -26,7 +26,6 @@ class CommandHandler:
         """
         Gathers user input from the input thread and executes commands.
         """
-        print("===Enter ? to view a list of commands===")
         while True:
             command_name, command_value = self._get_command()
             if command_name in self._help_commands:
