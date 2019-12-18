@@ -63,5 +63,5 @@ Closes the program.
 
 ## Links
 
-[GitHub](https://github.com/hillt03)  
+[GitHub](https://github.com/hillt03/VLCYT)  
 [PyPI](https://pypi.org/project/VLCYT/)
