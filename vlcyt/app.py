@@ -102,23 +102,46 @@ class VLCYT:
             elif self.song_counter == self.total_songs:
                 self.song_history = [self.song_history[-1]]
 
+    def _get_reformatted_song_date(self, date):
+        """
+        Returns a reformatted published date.
+        """
+        year, month, day = date.split()[0].split("-")
+        return f"{month}/{day}/{year}"
+
+    def _get_reformatted_song_length(self, original_length_string):
+        """
+        Returns a reformatted song length.
+        """
+        new_length_string = ""
+        if original_length_string.startswith("00:00:0"): # 00:00:05
+            new_length_string = original_length_string[-1] + " seconds"
+        elif original_length_string.startswith("00:00"): # 00:00:55
+            new_length_string = original_length_string[6:] + " seconds"
+        elif original_length_string.startswith("00:0"): # 00:05:55
+            new_length_string= original_length_string[4:]
+        elif original_length_string.startswith("00:"): # 00:55:55
+            new_length_string = original_length_string[3:]
+        elif original_length_string.startswith("0"): # 05:55:55
+            new_length_string = original_length_string[1:]
+        else:
+            new_length_string = original_length_string
+        return new_length_string
+
     def _print_current_song_information(self, print_command_string=True):
         """
         Prints the current song's relevant information.
         """
-        date = self.current_song.published.split()[0].split("-")
-        year, month, day = date
-        date = f"{month}/{day}/{year}"
 
         if self.song_info_enabled:
             os.system("cls||clear")
             print(             
 f"""{Fore.CYAN}======================================
 {Fore.GREEN}Title:{Fore.RESET} {self.current_song.title}
-{Fore.GREEN}Length:{Fore.RESET} {self.current_song.duration}
+{Fore.GREEN}Length:{Fore.RESET} {self._get_reformatted_song_length(self.current_song.duration)}
 {Fore.GREEN}Views:{Fore.RESET} {self.current_song.viewcount:,d}
 {Fore.GREEN}Rating:{Fore.RESET} {round(self.current_song.rating, 2)}
-{Fore.GREEN}Date:{Fore.RESET} {date}
+{Fore.GREEN}Date:{Fore.RESET} {self._get_reformatted_song_date(self.current_song.published)}
 {Fore.CYAN}======================================
 {self.command_string if print_command_string else ""}""",
                 end="",
