@@ -23,8 +23,8 @@ class VLCYT:
         self.total_songs = len(self.playlist)  # Amount of songs in the Pafy object
         self.current_song = None  # Stores the current song
         self.vlc_player = vlc.MediaPlayer()  # Stores the VLC object
+        
         self.song_info_enabled = song_info_enabled  # The current song information is printed when the song changes if this is enabled
-
         self.song_history = []  # Stores indexes of songs that have been played
 
         # User input
@@ -233,7 +233,7 @@ def parse_args():
     parser.add_argument(
         "youtube_playlist_URL",
         metavar="YouTube Playlist URL",
-        help="URL to a YouTube Playlist",
+        help="URL to a YouTube Playlist. Include quotes around the URL.",
     )
     parser.add_argument(
         "-v",
