@@ -1,6 +1,7 @@
 import threading
 import pyperclip
 from colorama import Fore
+from vlcyt.lyrics_scraper import get_lyrics
 
 
 class CommandHandler:
@@ -17,6 +18,7 @@ class CommandHandler:
     _loop_commands = ["loop", "l"]
     _shuffle_commands = ["shuffle"]
     _copy_url_commands = ["copy", "c", "url"]
+    _lyrics_commands = ["lyrics"]
     _exit_commands = ["exit", "quit", "q"]
 
     def __init__(self, vlcyt):
@@ -48,6 +50,8 @@ class CommandHandler:
                 self.command_shuffle()
             elif command_name in self._copy_url_commands:
                 self.command_copy_url()
+            elif command_name in self._lyrics_commands:
+                self.command_lyrics()
             elif command_name in self._exit_commands:
                 self.vlcyt.exit_program = True
             else:
@@ -106,6 +110,10 @@ Shuffles the playlist without repeating until every song has been played.
 
 {Fore.GREEN}copy, c, url{Fore.WHITE}
 Copy the current song's YouTube URL.
+
+{Fore.GREEN}lyrics{Fore.WHITE}
+{Fore.YELLOW}EXPERIMENTAL:{Fore.WHITE} Attempts to retrieve the current song's lyrics.
+Needs to be improved.
 
 {Fore.GREEN}exit, quit, q{Fore.WHITE}
 Closes the program.
@@ -211,3 +219,14 @@ Closes the program.
     def command_copy_url(self):
         pyperclip.copy("https://www.youtube.com/watch?v=" + self.vlcyt.current_song.videoid)
         print(f"{Fore.GREEN}Song URL Copied")
+    
+    def command_lyrics(self):
+        print(f"{Fore.MAGENTA}======================================{Fore.RESET}", end="")
+        try:
+            print(get_lyrics(self.vlcyt.current_song.title))
+            
+        except (AttributeError, IndexError) as e:
+            print(f"\n{Fore.RED}Failed to retrieve song lyrics :({Fore.RESET}")
+            #print(e)
+        print(f"{Fore.MAGENTA}======================================{Fore.RESET}")
+

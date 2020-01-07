@@ -12,6 +12,8 @@ youtube-dl = "*"
 colorama = "*"
 vlcyt = {editable = true,path = "."}
 pyperclip = "*"
+requests = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.8"

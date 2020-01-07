@@ -22,8 +22,8 @@ class VLCYT:
         self.song_counter = 0  # Stores how many songs have been played, resets if every song has been played.
         self.total_songs = len(self.playlist)  # Amount of songs in the Pafy object
         self.current_song = None  # Stores the current song
+        os.environ["VLC_VERBOSE"] = "-1"
         self.vlc_player = vlc.MediaPlayer()  # Stores the VLC object
-        
         self.song_info_enabled = song_info_enabled  # The current song information is printed when the song changes if this is enabled
         self.song_history = []  # Stores indexes of songs that have been played
 

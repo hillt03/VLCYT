@@ -4,3 +4,5 @@ pafy==0.5.5
 python-vlc==3.0.7110
 youtube-dl==2019.11.28
 VLCYT==1.8
+beautifulsoup4==4.8.1
+requests==2.22.0

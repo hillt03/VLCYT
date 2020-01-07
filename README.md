@@ -70,6 +70,10 @@ Shuffles the playlist without repeating until every song has been played.
 ### copy, c, url
 Copies the current song's YouTube URL.
 
+### lyrics
+EXPERIMENTAL: Attempts to retrieve the current song's lyrics.  
+Needs to be improved.
+
 ### exit, quit, q  
 Closes the program.
 
