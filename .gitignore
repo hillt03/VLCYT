@@ -6,6 +6,9 @@
 # Playlist
 data/
 
+# Keys
+vlcyt/keys.json
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -14,6 +17,7 @@ __pycache__/
 
 # VSCode
 .vscode/
+.vs/
 
 # C extensions
 *.so

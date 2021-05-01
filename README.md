@@ -3,10 +3,10 @@
 Stream your YouTube playlist in VLC behind the scenes from the command line.
 
 ## Check It Out
-https://streamable.com/z94tg
+https://streamable.com/43qzjl
 
 ## Requirements
-
+[YouTube Data V3 API Key](https://developers.google.com/youtube/v3/getting-started)
 [64-bit VLC Media Player](https://get.videolan.org/vlc/3.0.8/win64/vlc-3.0.8-win64.exe)  
 [64-bit Python 3.8](https://www.python.org/ftp/python/3.8.0/python-3.8.0-amd64.exe)  
 
@@ -21,16 +21,17 @@ This project has only been tested on Windows 10.
 
 Be sure to include quotes around arguments.
 
-`python -m vlcyt ["<youtube_playlist_url>" -v "<VLC Install directory>"]`
+`python -m vlcyt ["<youtube_playlist_url>" -a "<YouTube V3 API Key>" -v "<VLC Install directory>" ]`
 
 
 If you have VLC installed and get a FileNotFound Error, use the `-v` switch to include the path to your VLC install directory. Otherwise, don't forget to install VLC (64-bit). VLCYT will look for VLC in `C:\Program Files\VideoLAN\VLC` by default.
 
-After running for the first time, you can then simply enter `python -m vlcyt` and the last playlist you passed in will begin playing.
+After running for the first time, you can then simply enter `python -m vlcyt` and the last playlist you passed in will begin playing.  
+VLCYT user data (playlist url, API key, and VLC directory) is stored in %APPDATA%\Local\VLCYT.
 
 ### Example
 
-`python -m vlcyt "https://www.youtube.com/watch?v=8jrN6Kz2XbU&list=PLPVigFOpn3YjTdJ3-hIILmeP3jsjXntOU&index=1" -v "C:\Program Files\VideoLAN\VLC"`
+`python -m vlcyt "https://www.youtube.com/watch?v=8jrN6Kz2XbU&list=PLPVigFOpn3YjTdJ3-hIILmeP3jsjXntOU&index=1" -a "EXAMPLEAPIKEY" -v "C:\Program Files\VideoLAN\VLC"`
 
 After this initial command, do the following to load your stored settings:
 `python -m vlcyt`

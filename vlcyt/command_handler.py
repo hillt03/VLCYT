@@ -109,9 +109,9 @@ The current song will keep playing until looping is disabled.
 Shuffles the playlist without repeating until every song has been played.
 
 {Fore.GREEN}copy, c, url{Fore.WHITE}
-Copy the current song's YouTube URL.
+Copies the current song's YouTube URL.
 
-{Fore.GREEN}lyrics{Fore.WHITE}
+{Fore.GREEN}lyrics
 {Fore.YELLOW}EXPERIMENTAL:{Fore.WHITE} Attempts to retrieve the current song's lyrics.
 Needs to be improved.
 
@@ -223,10 +223,8 @@ Closes the program.
     def command_lyrics(self):
         print(f"{Fore.MAGENTA}======================================{Fore.RESET}", end="")
         try:
-            print(get_lyrics(self.vlcyt.current_song.title))
-            
+            print(get_lyrics(self.vlcyt._clean_title()))
         except (AttributeError, IndexError) as e:
             print(f"\n{Fore.RED}Failed to retrieve song lyrics :({Fore.RESET}")
-            #print(e)
         print(f"{Fore.MAGENTA}======================================{Fore.RESET}")
 

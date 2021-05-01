@@ -1,11 +1,13 @@
-import argparse
 import pafy
 import os
 import time
 import sys
 import threading
 import random
+import json
+import re
 from vlcyt.command_handler import CommandHandler
+from vlcyt.file_helpers import *
 from colorama import Fore, Back, Style
 
 
@@ -16,7 +18,8 @@ class VLCYT:
 
     command_string = f"{Fore.RESET}{Back.RESET}>"
 
-    def __init__(self, playlist_url, song_info_enabled=True):
+    def __init__(self, playlist_url, youtube_api_key, song_info_enabled=True):
+        pafy.set_api_key(youtube_api_key)
         self.playlist = pafy.get_playlist2(playlist_url)  # Pafy playlist object
         self.song_index = 0  # Current song index
         self.song_counter = 0  # Stores how many songs have been played, resets if every song has been played.
@@ -128,6 +131,33 @@ class VLCYT:
             new_length_string = original_length_string
         return new_length_string
 
+    def _clean_title(self):
+        """
+        Cleans the current song's title.
+        """
+        song_title = self.current_song.title
+        removals_regex = [
+                        "(\s*\((Official|Audio|Video).*\))",
+                        "(\s*\[(Official|Audio|Video).*\])",
+                        "\s*-Lyrics\s*",
+                        "\(.*Lyric.*\)",
+                        "\[.*Lyric.*\]",
+                        "\s*Lyrics\s*",
+                        "\s*Official Music Video\s*",
+                        "\s*\[NCS Release\]\s*",
+                        ]
+
+        rename_song = False
+        new_song_name = (self.current_song.title, 0)
+        searching_for_matches = True
+        while searching_for_matches:
+            new_song_name = re.subn("|".join(removals_regex), "", new_song_name[0], flags=re.IGNORECASE)
+            if new_song_name[1] == 0:
+                searching_for_matches = False
+            else:
+                rename_song = True
+        return new_song_name[0] if rename_song else song_title
+    
     def _print_current_song_information(self, print_command_string=True):
         """
         Prints the current song's relevant information.
@@ -137,7 +167,7 @@ class VLCYT:
             os.system("cls||clear")
             print(             
 f"""{Fore.CYAN}======================================
-{Fore.GREEN}Title:{Fore.RESET} {self.current_song.title}
+{Fore.GREEN}Title:{Fore.RESET} {self._clean_title()}
 {Fore.GREEN}Length:{Fore.RESET} {self._get_reformatted_song_length(self.current_song.duration)}
 {Fore.GREEN}Views:{Fore.RESET} {self.current_song.viewcount:,d}
 {Fore.GREEN}Rating:{Fore.RESET} {round(self.current_song.rating, 2)}
@@ -213,91 +243,21 @@ f"""{Fore.CYAN}======================================
         return True if self.vlc_player.get_state() == vlc.State.Paused else False
 
 
-def is_valid_file(parser, arg):
-    """
-    Function used to check if a valid VLC path was given.
-    """
-    if not os.path.exists(arg):
-        parser.error(
-            f"The filepath {arg} does not exist! Be sure to include quotes around the path, view help for more info."
-        )
-
-
-def parse_args():
-    """
-    Parses passed in CLI arguments. 
-    Output: tuple: YouTube playlist URL string, VLC Install Directory
-    """
-
-    parser = argparse.ArgumentParser(description="Streams YouTube Playlist in VLC")
-    parser.add_argument(
-        "youtube_playlist_URL",
-        metavar="YouTube Playlist URL",
-        help="URL to a YouTube Playlist. Include quotes around the URL.",
-    )
-    parser.add_argument(
-        "-v",
-        metavar="VLC Install Directory",
-        type=lambda x: is_valid_file(parser, x),
-        help='If you\'re getting a FileNotFound error, use this option to pass in your VLC install directory. Example: "C:\\Program Files\\VideoLAN\VLC" Be sure to include the quotes.',
-    )
-    args = parser.parse_args()
-    if args.v is None:
-        args.v = "C:\Program Files\VideoLAN\VLC"
-    return args.youtube_playlist_URL, args.v
-
-
-def add_vlc_dir_to_path(vlc_dir):
-    """
-    Note: The python-vlc module depends on a .dll in the VLC install directory.
-    Adds the install directory to the path and imports the vlc module.
-    """
-    app_dir = os.getcwd()
-    os.add_dll_directory(vlc_dir)
-    os.chdir(app_dir)
-    global vlc
-    import vlc
-
-
-def read_playlist_and_VLC_url_from_file():
-    """
-    Reads previously stored YouTube playlist URL and VLC directory.
-    Output: tuple: playlist url, vlc dir
-    """
-    url = ""
-    vlc_dir = ""
-    with open("data/playlist.txt", "r") as playlist_file:
-        url = playlist_file.read()
-    with open("data/vlc_dir.txt", "r") as vlc_dir_file:
-        vlc_dir = vlc_dir_file.read()
-    return url, vlc_dir
-
-
-def write_playlist_url_and_vlc_dir_to_file(playlist_url, vlc_dir):
-    """
-    Stores the playlist url and vlc dir.
-    """
-    if not os.path.isdir("./data"):
-        os.mkdir("./data")
-    with open("./data/playlist.txt", "w+") as playlist_file:
-        playlist_file.write(playlist_url)
-    with open("./data/vlc_dir.txt", "w+") as vlc_dir_file:
-        vlc_dir_file.write(vlc_dir)
-
-
 def main():
     if len(sys.argv) == 1:
-        if os.path.exists("data/playlist.txt") and os.path.exists("data/vlc_dir.txt"):
-            youtube_playlist_URL, vlc_dir = read_playlist_and_VLC_url_from_file()
+        if files_exist(get_file_list()):
+            youtube_playlist_URL, api_key, vlc_dir = read_playlist_url_api_key_and_vlc_dir_from_file()
         else:
             print('No YouTube playlist stored. Run "python -m vlcyt -h" for help.')
             sys.exit(0)
     else:
-        youtube_playlist_URL, vlc_dir = parse_args()
-        write_playlist_url_and_vlc_dir_to_file(youtube_playlist_URL, vlc_dir)
+        youtube_playlist_URL, api_key, vlc_dir = parse_args()
+        write_playlist_url_api_key_and_vlc_dir_to_file(youtube_playlist_URL, api_key, vlc_dir)
 
     add_vlc_dir_to_path(vlc_dir)
-    vlcyt = VLCYT(youtube_playlist_URL)
+    global vlc
+    import vlc
+    vlcyt = VLCYT(playlist_url=youtube_playlist_URL, youtube_api_key=api_key)
     vlcyt.play_playlist_songs()
 
 

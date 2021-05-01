@@ -18,7 +18,6 @@ def get_lyrics(song_title):
             lyrics_url = lyrics_url[0:lyrics_url.find("&")]
 
         r2 = requests.get(lyrics_url)
-        print(f"CONTENT:\n{r2.content}")
         soup2 = BeautifulSoup(r2.content, "html.parser")
         lyrics = soup2.select("div.col-xs-12:nth-child(2) > div:nth-child(8)")
         return lyrics[0].get_text()
