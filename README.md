@@ -6,7 +6,7 @@ Stream your YouTube playlist in VLC behind the scenes from the command line.
 https://streamable.com/43qzjl
 
 ## Requirements
-[YouTube Data V3 API Key](https://developers.google.com/youtube/v3/getting-started)
+[YouTube Data V3 API Key](https://developers.google.com/youtube/v3/getting-started)  
 [64-bit VLC Media Player](https://get.videolan.org/vlc/3.0.8/win64/vlc-3.0.8-win64.exe)  
 [64-bit Python 3.8](https://www.python.org/ftp/python/3.8.0/python-3.8.0-amd64.exe)  
 
