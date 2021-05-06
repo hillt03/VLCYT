@@ -75,8 +75,7 @@ class CommandHandler:
 
     def command_help(self):
         print(
-            f"""
-{Fore.MAGENTA}======================================
+f"""{Fore.MAGENTA}======================================
 {Fore.YELLOW}NOTE: Most commands have multiple aliases separated by commas, use whichever you prefer.
 
 {Fore.CYAN}VLCYT Commands:
@@ -128,6 +127,11 @@ Closes the program.
         """
         Sets VLC volume.
         """
+        if not volume:
+            print(
+                f"Volume: {Fore.GREEN}{self.vlcyt.vlc_player.audio_get_volume()}{Fore.RESET}"
+            )
+            return
         try:
             volume = int(volume)
         except (TypeError, ValueError):
@@ -191,7 +195,7 @@ Closes the program.
         """
         Play last song in history.
         """
-        if self.vlcyt.song_history:
+        if self.vlcyt.song_history and self.vlcyt.song_index != 0:
             self.vlcyt.back_song = True
             self.vlcyt.skip_song = True
         else:
@@ -215,16 +219,19 @@ Closes the program.
         else:
             self.vlcyt.shuffle_playlist = False
             print(f"Shuffle {Fore.RED}disabled.{Fore.RESET}")
-    
+
     def command_copy_url(self):
-        pyperclip.copy("https://www.youtube.com/watch?v=" + self.vlcyt.current_song.videoid)
+        pyperclip.copy(
+            "https://www.youtube.com/watch?v=" + self.vlcyt.current_song.videoid
+        )
         print(f"{Fore.GREEN}Song URL Copied")
-    
+
     def command_lyrics(self):
-        print(f"{Fore.MAGENTA}======================================{Fore.RESET}", end="")
+        print(
+            f"{Fore.MAGENTA}======================================{Fore.RESET}", end=""
+        )
         try:
             print(get_lyrics(self.vlcyt._clean_title()))
         except (AttributeError, IndexError) as e:
             print(f"\n{Fore.RED}Failed to retrieve song lyrics :({Fore.RESET}")
         print(f"{Fore.MAGENTA}======================================{Fore.RESET}")
-

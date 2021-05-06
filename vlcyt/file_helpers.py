@@ -4,6 +4,7 @@ import argparse
 
 app_dir = appdirs.user_data_dir() + "/VLCYT/"
 
+
 def is_valid_file(parser, arg):
     """
     Function used to check if a valid VLC path was given.
@@ -13,9 +14,10 @@ def is_valid_file(parser, arg):
             f"The filepath {arg} does not exist! Be sure to include quotes around the path, view help for more info."
         )
 
+
 def parse_args():
     """
-    Parses passed in CLI arguments. 
+    Parses passed in CLI arguments.
     Output: tuple: YouTube playlist URL string, VLC Install Directory
     """
     parser = argparse.ArgumentParser(description="Streams YouTube Playlist in VLC")
@@ -48,7 +50,6 @@ def add_vlc_dir_to_path(vlc_dir):
     """
     os.add_dll_directory(vlc_dir)
     os.chdir(app_dir)
-    
 
 
 def read_playlist_url_api_key_and_vlc_dir_from_file():
@@ -81,18 +82,23 @@ def write_playlist_url_api_key_and_vlc_dir_to_file(playlist_url, api_key, vlc_di
     with open(app_dir + "vlc_dir.txt", "w+") as vlc_dir_file:
         vlc_dir_file.write(vlc_dir)
 
+
 def files_exist(file_list):
     return False not in [os.path.isfile(i) for i in file_list]
 
+
 def get_file_list():
     return [app_dir + "playlist.txt", app_dir + "vlc_dir.txt", app_dir + "api_key.txt"]
+
 
 def clear_data():
     for file in get_file_list():
         os.remove(file)
 
+
 def main():
     clear_data()
+
 
 if __name__ == "__main__":
     main()

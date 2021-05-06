@@ -18,30 +18,28 @@ class VLCYT:
 
     command_string = f"{Fore.RESET}{Back.RESET}>"
 
-    def __init__(self, playlist_url, youtube_api_key, song_info_enabled=True):
+    def __init__(self, youtube_playlist_url, youtube_api_key, song_info_enabled=True):
         pafy.set_api_key(youtube_api_key)
-        self.playlist = pafy.get_playlist2(playlist_url)  # Pafy playlist object
+        self.playlist = pafy.get_playlist2(youtube_playlist_url)  # Pafy playlist object
         self.song_index = 0  # Current song index
         self.song_counter = 0  # Stores how many songs have been played, resets if every song has been played.
         self.total_songs = len(self.playlist)  # Amount of songs in the Pafy object
         self.current_song = None  # Stores the current song
-        os.environ["VLC_VERBOSE"] = "-1"
+        os.environ["VLC_VERBOSE"] = "-1" # Decrease verbosity of VLC error output, necessary because errors sometimes occur that spam the screen but otherwise have no effect
         self.vlc_player = vlc.MediaPlayer()  # Stores the VLC object
         self.song_info_enabled = song_info_enabled  # The current song information is printed when the song changes if this is enabled
         self.song_history = []  # Stores indexes of songs that have been played
 
         # User input
-        self.cmds = CommandHandler(self)
-        self.input_thread_started = False
+        self.cmds = CommandHandler(self) # Collects user input on another thread
 
         # Command helpers
         self.skip_song = False  # Becomes True if the user enters the skip command
         self.exit_program = False  # Becomes True if the user enters the exit command
         self.loop_song = False  # Becomes True if the user enters the loop command
-        self.shuffle_playlist = False  # Becomes True if the user enters the shuffle command
+        self.shuffle_playlist = False # Becomes True if the user enters the shuffle command
         self.back_song = False  # Becomes True if the user enters the back command
         self.back_amount = 1  # Stores how many indexes back will be popped from song_history to get songs in history
-
 
     def play_playlist_songs(self):
         """
@@ -49,7 +47,9 @@ class VLCYT:
         Note: Skip is handled in command_handler and _get_next_song() is executed following a skip.
         """
         while True:
-            if not self._input_features_enabled():  # No extra features enabled. Default.
+            if (
+                not self._input_features_enabled()
+            ):  # No extra features enabled. Default.
                 self._get_next_song()
             elif self.back_song:  # Back command entered
                 self._get_next_song_back()
@@ -117,15 +117,15 @@ class VLCYT:
         Returns a reformatted song length.
         """
         new_length_string = ""
-        if original_length_string.startswith("00:00:0"): # 00:00:05
+        if original_length_string.startswith("00:00:0"):  # 00:00:05
             new_length_string = original_length_string[-1] + " seconds"
-        elif original_length_string.startswith("00:00"): # 00:00:55
+        elif original_length_string.startswith("00:00"):  # 00:00:55
             new_length_string = original_length_string[6:] + " seconds"
-        elif original_length_string.startswith("00:0"): # 00:05:55
-            new_length_string= original_length_string[4:]
-        elif original_length_string.startswith("00:"): # 00:55:55
+        elif original_length_string.startswith("00:0"):  # 00:05:55
+            new_length_string = original_length_string[4:]
+        elif original_length_string.startswith("00:"):  # 00:55:55
             new_length_string = original_length_string[3:]
-        elif original_length_string.startswith("0"): # 05:55:55
+        elif original_length_string.startswith("0"):  # 05:55:55
             new_length_string = original_length_string[1:]
         else:
             new_length_string = original_length_string
@@ -137,35 +137,36 @@ class VLCYT:
         """
         song_title = self.current_song.title
         removals_regex = [
-                        "(\s*\((Official|Audio|Video).*\))",
-                        "(\s*\[(Official|Audio|Video).*\])",
-                        "\s*-Lyrics\s*",
-                        "\(.*Lyric.*\)",
-                        "\[.*Lyric.*\]",
-                        "\s*Lyrics\s*",
-                        "\s*Official Music Video\s*",
-                        "\s*\[NCS Release\]\s*",
-                        ]
+            "(\s*\((Official|Audio|Video).*\))",
+            "(\s*\[(Official|Audio|Video).*\])",
+            "\s*-Lyrics\s*",
+            "\(.*Lyric.*\)",
+            "\[.*Lyric.*\]",
+            "\s*Lyrics\s*",
+            "\s*Official Music Video\s*",
+            "\s*\[NCS Release\]\s*",
+        ]
 
         rename_song = False
         new_song_name = (self.current_song.title, 0)
         searching_for_matches = True
         while searching_for_matches:
-            new_song_name = re.subn("|".join(removals_regex), "", new_song_name[0], flags=re.IGNORECASE)
+            new_song_name = re.subn(
+                "|".join(removals_regex), "", new_song_name[0], flags=re.IGNORECASE
+            )
             if new_song_name[1] == 0:
                 searching_for_matches = False
             else:
                 rename_song = True
         return new_song_name[0] if rename_song else song_title
-    
+
     def _print_current_song_information(self, print_command_string=True):
         """
         Prints the current song's relevant information.
         """
-
         if self.song_info_enabled:
             os.system("cls||clear")
-            print(             
+            print(
 f"""{Fore.CYAN}======================================
 {Fore.GREEN}Title:{Fore.RESET} {self._clean_title()}
 {Fore.GREEN}Length:{Fore.RESET} {self._get_reformatted_song_length(self.current_song.duration)}
@@ -184,15 +185,14 @@ f"""{Fore.CYAN}======================================
 
         self._reset_state()
         # Play song
-        song_url = self.current_song.getbestaudio().url_https
-        self.vlc_player.set_mrl(song_url, ":no-video")
+        self.vlc_player.set_mrl(self.current_song.getbestaudio().url_https, ":no-video")
         self.vlc_player.play()
-
-        if not self.input_thread_started:
+        
+        if not self.cmds.input_thread.is_alive():
             self._print_current_song_information(print_command_string=False)
             print(f"{Fore.YELLOW}===Enter ? to view a list of commands==={Fore.RESET}")
             self.cmds.input_thread.start()
-            self.input_thread_started = True
+            
         else:
             self._print_current_song_information()
 
@@ -227,7 +227,12 @@ f"""{Fore.CYAN}======================================
         return False
 
     def _input_features_enabled(self):
-        input_features = [self.loop_song, self.shuffle_playlist, self.back_song, self.skip_song]
+        input_features = [
+            self.loop_song,
+            self.shuffle_playlist,
+            self.back_song,
+            self.skip_song,
+        ]
         return True if True in input_features else False
 
     def _add_song_to_history(self):
@@ -246,18 +251,25 @@ f"""{Fore.CYAN}======================================
 def main():
     if len(sys.argv) == 1:
         if files_exist(get_file_list()):
-            youtube_playlist_URL, api_key, vlc_dir = read_playlist_url_api_key_and_vlc_dir_from_file()
+            (
+                youtube_playlist_URL,
+                api_key,
+                vlc_dir,
+            ) = read_playlist_url_api_key_and_vlc_dir_from_file()
         else:
             print('No YouTube playlist stored. Run "python -m vlcyt -h" for help.')
             sys.exit(0)
     else:
         youtube_playlist_URL, api_key, vlc_dir = parse_args()
-        write_playlist_url_api_key_and_vlc_dir_to_file(youtube_playlist_URL, api_key, vlc_dir)
+        write_playlist_url_api_key_and_vlc_dir_to_file(
+            youtube_playlist_URL, api_key, vlc_dir
+        )
 
     add_vlc_dir_to_path(vlc_dir)
     global vlc
     import vlc
-    vlcyt = VLCYT(playlist_url=youtube_playlist_URL, youtube_api_key=api_key)
+
+    vlcyt = VLCYT(youtube_playlist_url=youtube_playlist_URL, youtube_api_key=api_key)
     vlcyt.play_playlist_songs()
 
 
