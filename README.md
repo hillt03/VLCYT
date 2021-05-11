@@ -75,7 +75,7 @@ Copies the current song's YouTube URL.
 EXPERIMENTAL: Attempts to retrieve the current song's lyrics.  
 Needs to be improved.
 
-### exit, quit, q  
+### exit, quit, q, x  
 Closes the program.
 
 ## Links

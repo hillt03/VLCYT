@@ -4,7 +4,6 @@ import time
 import sys
 import threading
 import random
-import json
 import re
 from vlcyt.command_handler import CommandHandler
 from vlcyt.file_helpers import *
@@ -25,21 +24,14 @@ class VLCYT:
         self.song_counter = 0  # Stores how many songs have been played, resets if every song has been played.
         self.total_songs = len(self.playlist)  # Amount of songs in the Pafy object
         self.current_song = None  # Stores the current song
-        os.environ["VLC_VERBOSE"] = "-1" # Decrease verbosity of VLC error output, necessary because errors sometimes occur that spam the screen but otherwise have no effect
+        os.environ["VLC_VERBOSE"] = "-1"  # Decrease verbosity of VLC error output, necessary because errors sometimes occur that spam the screen but otherwise have no effect
         self.vlc_player = vlc.MediaPlayer()  # Stores the VLC object
         self.song_info_enabled = song_info_enabled  # The current song information is printed when the song changes if this is enabled
         self.song_history = []  # Stores indexes of songs that have been played
 
         # User input
-        self.cmds = CommandHandler(self) # Collects user input on another thread
+        self.cmds = CommandHandler(self)  # Collects user input on another thread
 
-        # Command helpers
-        self.skip_song = False  # Becomes True if the user enters the skip command
-        self.exit_program = False  # Becomes True if the user enters the exit command
-        self.loop_song = False  # Becomes True if the user enters the loop command
-        self.shuffle_playlist = False # Becomes True if the user enters the shuffle command
-        self.back_song = False  # Becomes True if the user enters the back command
-        self.back_amount = 1  # Stores how many indexes back will be popped from song_history to get songs in history
 
     def play_playlist_songs(self):
         """
@@ -51,12 +43,12 @@ class VLCYT:
                 not self._input_features_enabled()
             ):  # No extra features enabled. Default.
                 self._get_next_song()
-            elif self.back_song:  # Back command entered
+            elif self.cmds.back_song:  # Back command entered
                 self._get_next_song_back()
-            elif self.loop_song:  # Looping enabled
+            elif self.cmds.loop_song:  # Looping enabled
                 pass  # we don't need to change the value of self.current_song in this case
-            elif self.shuffle_playlist:  # Shuffling enabled
-                self.back_amount = 0
+            elif self.cmds.shuffle_playlist:  # Shuffling enabled
+                self.cmds.back_amount = 0
                 self._get_next_song_shuffling()
             self._play_current_song()
 
@@ -70,7 +62,7 @@ class VLCYT:
         """
         Sets the current song to the next song index and adds it to song_history.
         """
-        self.back_amount = 0
+        self.cmds.back_amount = 0
         self._set_current_song(self.song_index)
         self._add_song_to_history()
         self.song_index += 1
@@ -80,14 +72,14 @@ class VLCYT:
         Sets the current song to the last played song.
         Supports multiple back commands and shuffle.
         """
-        self.back_amount -= 1
-        if len(self.song_history) > abs(self.back_amount):
-            self.song_index = self.song_history.pop(self.back_amount - 1)
+        self.cmds.back_amount -= 1
+        if len(self.song_history) > abs(self.cmds.back_amount):
+            self.song_index = self.song_history.pop(self.cmds.back_amount - 1)
             self._set_current_song(self.song_index)
             self._add_song_to_history()
         else:
             print("No songs remaining in history.")
-        self.back_song = False
+        self.cmds.back_song = False
 
     def _get_next_song_shuffling(self):
         """
@@ -146,7 +138,6 @@ class VLCYT:
             "\s*Official Music Video\s*",
             "\s*\[NCS Release\]\s*",
         ]
-
         rename_song = False
         new_song_name = (self.current_song.title, 0)
         searching_for_matches = True
@@ -182,17 +173,15 @@ f"""{Fore.CYAN}======================================
         """
         Plays the current song stored in self.current_song and adds it to song history.
         """
-
         self._reset_state()
         # Play song
         self.vlc_player.set_mrl(self.current_song.getbestaudio().url_https, ":no-video")
         self.vlc_player.play()
-        
+
         if not self.cmds.input_thread.is_alive():
             self._print_current_song_information(print_command_string=False)
             print(f"{Fore.YELLOW}===Enter ? to view a list of commands==={Fore.RESET}")
             self.cmds.input_thread.start()
-            
         else:
             self._print_current_song_information()
 
@@ -205,11 +194,11 @@ f"""{Fore.CYAN}======================================
         """
         time.sleep(0.5)
         while self.vlc_player.is_playing() or self.vlc_is_paused():
-            if self.skip_song:
+            if self.cmds.skip_song:
                 self.vlc_player.stop()
-                self.skip_song = False
+                self.cmds.skip_song = False
                 break
-            if self.exit_program:
+            if self.cmds.exit_program:
                 Fore.RESET
                 Back.RESET
                 sys.exit(0)
@@ -228,10 +217,10 @@ f"""{Fore.CYAN}======================================
 
     def _input_features_enabled(self):
         input_features = [
-            self.loop_song,
-            self.shuffle_playlist,
-            self.back_song,
-            self.skip_song,
+            self.cmds.loop_song,
+            self.cmds.shuffle_playlist,
+            self.cmds.back_song,
+            self.cmds.skip_song,
         ]
         return True if True in input_features else False
 

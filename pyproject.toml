@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "VLCYT"
+version = "2.0"
+description = "Stream your YouTube playlist in VLC behind the scenes from the command line."
+authors = ["hillt03 <hillt03@yahoo.com>"]
+license = "MIT License (MIT)"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pafy = "^0.5.5"
+python-vlc = "^3.0.12118"
+colorama = "^0.4.4"
+appdirs = "^1.4.4"
+beautifulsoup4 = "^4.9.3"
+pyperclip = "^1.8.2"
+requests = "^2.25.1"
+youtube_dl = "^2021.4.26"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 
 
 def get_lyrics(song_title):
+    """
+    Returns lyrics for a passed in song title.
+    """
     with requests.session() as c:
-        """
-        Returns lyrics for a passed in song title.
-        """
         url = r"https://search.azlyrics.com/search.php?"
 
         query = {"q": song_title}

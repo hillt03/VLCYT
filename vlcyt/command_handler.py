@@ -8,7 +8,6 @@ class CommandHandler:
     """
     Handles user input for VLCYT
     """
-
     _help_commands = ["?", "help"]
     _volume_commands = ["volume", "v"]
     _skip_commands = ["skip", "s", "next", "n", "forward", "f"]
@@ -19,12 +18,19 @@ class CommandHandler:
     _shuffle_commands = ["shuffle"]
     _copy_url_commands = ["copy", "c", "url"]
     _lyrics_commands = ["lyrics"]
-    _exit_commands = ["exit", "quit", "q"]
+    _exit_commands = ["exit", "quit", "q", "x"]
 
     def __init__(self, vlcyt):
         self.vlcyt = vlcyt
         self.input_thread = threading.Thread(target=self._get_input)
         self.input_thread.daemon = True
+
+        self.skip_song = False  # Becomes True if the user enters the skip command
+        self.exit_program = False  # Becomes True if the user enters the exit command
+        self.loop_song = False  # Becomes True if the user enters the loop command
+        self.shuffle_playlist = False  # Becomes True if the user enters the shuffle command
+        self.back_song = False  # Becomes True if the user enters the back command
+        self.back_amount = 1  # Stores how many indexes back will be popped from song_history to get songs in history
 
     def _get_input(self):
         """
@@ -53,7 +59,7 @@ class CommandHandler:
             elif command_name in self._lyrics_commands:
                 self.command_lyrics()
             elif command_name in self._exit_commands:
-                self.vlcyt.exit_program = True
+                self.exit_program = True
             else:
                 print(f"{Fore.RED}Invalid command{Fore.RESET}")
 
@@ -114,12 +120,12 @@ Copies the current song's YouTube URL.
 {Fore.YELLOW}EXPERIMENTAL:{Fore.WHITE} Attempts to retrieve the current song's lyrics.
 Needs to be improved.
 
-{Fore.GREEN}exit, quit, q{Fore.WHITE}
+{Fore.GREEN}exit, quit, q, x{Fore.WHITE}
 Closes the program.
 {Fore.MAGENTA}======================================
 {Fore.CYAN}---Settings---{Fore.RESET}
-{Fore.GREEN}Looping:{Fore.RESET} {f"{Fore.GREEN}Enabled{Fore.RESET}" if self.vlcyt.loop_song else f"{Fore.RED}Disabled{Fore.RESET}"}
-{Fore.GREEN}Shuffling:{Fore.RESET} {f"{Fore.GREEN}Enabled{Fore.RESET}" if self.vlcyt.shuffle_playlist else f"{Fore.RED}Disabled{Fore.RESET}"}
+{Fore.GREEN}Looping:{Fore.RESET} {f"{Fore.GREEN}Enabled{Fore.RESET}" if self.loop_song else f"{Fore.RED}Disabled{Fore.RESET}"}
+{Fore.GREEN}Shuffling:{Fore.RESET} {f"{Fore.GREEN}Enabled{Fore.RESET}" if self.shuffle_playlist else f"{Fore.RED}Disabled{Fore.RESET}"}
 {Fore.CYAN}--------------{Fore.RESET}"""
         )
 
@@ -138,10 +144,8 @@ Closes the program.
             print(f"{Fore.RED}Bad input.{Fore.RESET} Enter an integer from 0 - 100.")
             return
         if 0 <= volume <= 100:
-            if (
-                self.vlcyt.vlc_player.audio_set_volume(volume) == 0
-            ):  # Returns 0 if volume was set
-                print(f"Volume set to {Fore.GREEN}{volume}{Fore.RESET}")
+            self.vlcyt.vlc_player.audio_set_volume(volume)
+            print(f"Volume set to {Fore.GREEN}{volume}{Fore.RESET}")
         else:
             print(f"{Fore.RED}Volume out of range.{Fore.RESET} Range: 0 - 100")
 
@@ -150,7 +154,6 @@ Closes the program.
         Skips the current song.
         Round robins if it causes the song counter to go over the total amount of songs in the playlist.
         """
-
         if amount_to_skip is not None:
             try:
                 amount_to_skip = int(amount_to_skip)
@@ -164,18 +167,18 @@ Closes the program.
                 if self.vlcyt.song_index < self.vlcyt.total_songs
                 else 0
             )
-            self.vlcyt.skip_song = True
+            self.skip_song = True
         elif amount_to_skip > 1:
             potential_index = self.vlcyt.song_index + amount_to_skip
             if potential_index <= self.vlcyt.total_songs:
                 self.vlcyt.song_index += amount_to_skip - 1
-                self.vlcyt.skip_song = True
+                self.skip_song = True
             else:  # Round robin
                 total_multiplier = potential_index // self.vlcyt.total_songs
                 self.vlcyt.song_index = (
                     potential_index - 1 - self.vlcyt.total_songs * total_multiplier
                 )
-                self.vlcyt.skip_song = True
+                self.skip_song = True
         else:
             print(f"{Fore.RED}Bad input.{Fore.RESET} Enter a value greater than 0.")
 
@@ -196,8 +199,8 @@ Closes the program.
         Play last song in history.
         """
         if self.vlcyt.song_history and self.vlcyt.song_index != 0:
-            self.vlcyt.back_song = True
-            self.vlcyt.skip_song = True
+            self.back_song = True
+            self.skip_song = True
         else:
             print(f"{Fore.RED}No songs in history{Fore.RESET}")
 
@@ -205,19 +208,19 @@ Closes the program.
         """
         Enables/Disables looping the current song.
         """
-        if self.vlcyt.loop_song == False:
-            self.vlcyt.loop_song = True
+        if self.loop_song == False:
+            self.loop_song = True
             print(f"Looping {Fore.GREEN}enabled.{Fore.RESET}")
         else:
-            self.vlcyt.loop_song = False
+            self.loop_song = False
             print(f"Looping {Fore.RED}disabled.{Fore.RESET}")
 
     def command_shuffle(self):
-        if self.vlcyt.shuffle_playlist == False:
-            self.vlcyt.shuffle_playlist = True
+        if self.shuffle_playlist == False:
+            self.shuffle_playlist = True
             print(f"Shuffle {Fore.GREEN}enabled.{Fore.RESET}")
         else:
-            self.vlcyt.shuffle_playlist = False
+            self.shuffle_playlist = False
             print(f"Shuffle {Fore.RED}disabled.{Fore.RESET}")
 
     def command_copy_url(self):
