@@ -40,7 +40,7 @@ class VLCYT:
         """
         while True:
             if (
-                not self._input_features_enabled()
+                not self.cmds.input_features_enabled()
             ):  # No extra features enabled. Default.
                 self._get_next_song()
             elif self.cmds.back_song:  # Back command entered
@@ -108,20 +108,18 @@ class VLCYT:
         """
         Returns a reformatted song length.
         """
-        new_length_string = ""
         if original_length_string.startswith("00:00:0"):  # 00:00:05
-            new_length_string = original_length_string[-1] + " seconds"
+            return original_length_string[-1] + " seconds"
         elif original_length_string.startswith("00:00"):  # 00:00:55
-            new_length_string = original_length_string[6:] + " seconds"
+            return original_length_string[6:] + " seconds"
         elif original_length_string.startswith("00:0"):  # 00:05:55
-            new_length_string = original_length_string[4:]
+            return original_length_string[4:]
         elif original_length_string.startswith("00:"):  # 00:55:55
-            new_length_string = original_length_string[3:]
+            return original_length_string[3:]
         elif original_length_string.startswith("0"):  # 05:55:55
-            new_length_string = original_length_string[1:]
+            return original_length_string[1:]
         else:
-            new_length_string = original_length_string
-        return new_length_string
+            return original_length_string
 
     def _clean_title(self):
         """
@@ -215,15 +213,6 @@ f"""{Fore.CYAN}======================================
             return True
         return False
 
-    def _input_features_enabled(self):
-        input_features = [
-            self.cmds.loop_song,
-            self.cmds.shuffle_playlist,
-            self.cmds.back_song,
-            self.cmds.skip_song,
-        ]
-        return True if True in input_features else False
-
     def _add_song_to_history(self):
         """
         Adds the current song index to song_history.
@@ -234,7 +223,7 @@ f"""{Fore.CYAN}======================================
         """
         Check if the VLC player is paused.
         """
-        return True if self.vlc_player.get_state() == vlc.State.Paused else False
+        return self.vlc_player.get_state() == vlc.State.Paused
 
 
 def main():

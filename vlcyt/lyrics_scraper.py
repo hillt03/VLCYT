@@ -23,6 +23,8 @@ def get_lyrics(song_title):
         lyrics = soup2.select("div.col-xs-12:nth-child(2) > div:nth-child(8)")
         return lyrics[0].get_text()
 
+def main():
+    pass
 
 if __name__ == "__main__":
-    pass
+    main()

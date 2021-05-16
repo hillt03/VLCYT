@@ -79,6 +79,18 @@ class CommandHandler:
             command_value = None
         return command_name, command_value
 
+    def input_features_enabled(self):
+        """
+        Returns True if loop, shuffle, back, or skip are enabled.
+        """
+        input_features = [
+            self.loop_song,
+            self.shuffle_playlist,
+            self.back_song,
+            self.skip_song,
+        ]
+        return True in input_features
+
     def command_help(self):
         print(
 f"""{Fore.MAGENTA}======================================
@@ -172,13 +184,12 @@ Closes the program.
             potential_index = self.vlcyt.song_index + amount_to_skip
             if potential_index <= self.vlcyt.total_songs:
                 self.vlcyt.song_index += amount_to_skip - 1
-                self.skip_song = True
             else:  # Round robin
                 total_multiplier = potential_index // self.vlcyt.total_songs
                 self.vlcyt.song_index = (
                     potential_index - 1 - self.vlcyt.total_songs * total_multiplier
                 )
-                self.skip_song = True
+            self.skip_song = True
         else:
             print(f"{Fore.RED}Bad input.{Fore.RESET} Enter a value greater than 0.")
 
